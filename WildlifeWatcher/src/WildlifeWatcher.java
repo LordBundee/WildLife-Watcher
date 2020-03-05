@@ -30,7 +30,7 @@ public class WildlifeWatcher extends Frame implements WindowListener, ActionList
 
     int maxEntries = 100;     // Global variable to define the maximum size of the 3 arrays.
     int numberOfEntries = 0;  // Global variable to remember how many actual entries are currently in the 3 arrays.
-    int myCurrentEntry = 0;     // Global variable to remember which entry in the arrays we are currently focused on.
+    int currentEntry = 0;     // Global variable to remember which entry in the arrays we are currently focused on.
     
     // Declare the 3 arrays for storing the PC/IP data in memory - each has a maximum size of
 	//         maxEntries (currently equal to 100 entries)
@@ -90,15 +90,7 @@ public class WildlifeWatcher extends Frame implements WindowListener, ActionList
         
     }
 
-    /**
-    * Method with low coupling and high cohesion 
-    *    for adding individual labels:
-    *    - reduces overall code, especially in the
-    *         LocateLabels method.
-    *    - makes this method re-usable with minimal
-    *         adjustment as it is moved from one
-    *         program to another.
-    */
+   //Method for setting up and locating a single label in frame
     public Label LocateALabel(SpringLayout myLabelLayout, Label myLabel, String  LabelCaption, int x, int y)
     {
         myLabel = new Label(LabelCaption);
@@ -167,15 +159,7 @@ public class WildlifeWatcher extends Frame implements WindowListener, ActionList
         btnDisplay   =LocateAButton(myButtonLayout, btnDisplay, "Display for Location", 375, 225, 125, 25);
     }
 
-    /**
-    * Method with low coupling and high cohesion 
-    *    for adding individual buttons:
-    *    - reduces overall code, especially in the
-    *         LocateButtons method.
-    *    - makes this method re-usable with minimal
-    *         adjustment as it is moved from one
-    *         program to another.
-    */
+    
     public Button LocateAButton(SpringLayout myButtonLayout, Button myButton, String  ButtonCaption, int x, int y, int w, int h)
     {    
         myButton = new Button(ButtonCaption);
@@ -192,17 +176,17 @@ public class WildlifeWatcher extends Frame implements WindowListener, ActionList
         // BUTTON FIRST
         if(e.getSource() == btnFirst)
         {
-            myCurrentEntry = 0;
-            displayEntry(myCurrentEntry);
+            currentEntry = 0;
+            displayEntry(currentEntry);
         }
 
         // BUTTON PREVIOUS
         if(e.getSource() == btnPrev)
         {
-            if (myCurrentEntry > 0)
+            if (currentEntry > 0)
             {
-                myCurrentEntry--;
-                displayEntry(myCurrentEntry); 
+                currentEntry--;
+                displayEntry(currentEntry); 
             }
             
         }
@@ -210,10 +194,10 @@ public class WildlifeWatcher extends Frame implements WindowListener, ActionList
         // BUTTON NEXT
         if (e.getSource()== btnNext)
         {
-            if (myCurrentEntry < numberOfEntries -1)
+            if (currentEntry < numberOfEntries -1)
             {
-                myCurrentEntry++;
-            displayEntry(myCurrentEntry); 
+                currentEntry++;
+            displayEntry(currentEntry); 
             }
             
         }
@@ -221,8 +205,8 @@ public class WildlifeWatcher extends Frame implements WindowListener, ActionList
         // BUTTON LAST
         if(e.getSource() == btnLast)
         {
-            myCurrentEntry = numberOfEntries -1;
-            displayEntry(myCurrentEntry);
+            currentEntry = numberOfEntries -1;
+            displayEntry(currentEntry);
         }
 
         // BUTTON NEW
@@ -234,13 +218,13 @@ public class WildlifeWatcher extends Frame implements WindowListener, ActionList
                 // Increment the numberOfEntries
                 numberOfEntries++;
                 // Set the current entry to the new record
-                myCurrentEntry = numberOfEntries - 1;
+                currentEntry = numberOfEntries - 1;
                 // Blank out any existing data in the 3 arrays, ready
                 //       for adding the new record.
-                WLData[myCurrentEntry] = new WildlifeSightingData("","","","","");
+                WLData[currentEntry] = new WildlifeSightingData("","","","","");
                 
                 // Display this new blank entry on screen
-                displayEntry(myCurrentEntry);
+                displayEntry(currentEntry);
                 btnSave.setEnabled(true);
                 btnNew.setEnabled(false);
                 btnDel.setEnabled(false);
@@ -257,7 +241,7 @@ public class WildlifeWatcher extends Frame implements WindowListener, ActionList
             }
             else
             {
-             saveEntry(myCurrentEntry);
+             saveEntry(currentEntry);
              btnNew.setEnabled(true);
              btnDel.setEnabled(true);
             }
@@ -268,7 +252,7 @@ public class WildlifeWatcher extends Frame implements WindowListener, ActionList
         {
               // Move all the later entries up one line each in the arrays, covering over
             //      the current entry in the process
-            for (int i = myCurrentEntry; i < numberOfEntries - 1; i++)
+            for (int i = currentEntry; i < numberOfEntries - 1; i++)
             {
                 if(WLData[i + 1] != null)
                 {
@@ -281,14 +265,14 @@ public class WildlifeWatcher extends Frame implements WindowListener, ActionList
             }
             // Reduce the current total number of entries stored in the array by one.
 			// Then check if the current entry is now further down the array than
-            //      the last entry.  If so, reduce the value of myCurrentEntry by 1.
+            //      the last entry.  If so, reduce the value of currentEntry by 1.
             numberOfEntries--;
-            if (myCurrentEntry > numberOfEntries - 1)
+            if (currentEntry > numberOfEntries - 1)
             {
-                myCurrentEntry = numberOfEntries - 1;
+                currentEntry = numberOfEntries - 1;
             }
-            // Display the myCurrentEntry
-            displayEntry(myCurrentEntry);
+            // Display the currentEntry
+            displayEntry(currentEntry);
         }
 
         // BUTTON FIND
@@ -311,11 +295,11 @@ public class WildlifeWatcher extends Frame implements WindowListener, ActionList
                 // Increment the counter (i) so the loop will move onto the next record
                 i++;
             }
-            // If the entry was found, then set the value of myCurrentEntry and then display the entry.
+            // If the entry was found, then set the value of currentEntry and then display the entry.
             if (found) 
             {
-                myCurrentEntry = i - 1;
-                displayEntry(myCurrentEntry);
+                currentEntry = i - 1;
+                displayEntry(currentEntry);
             }
         }
         
@@ -402,7 +386,7 @@ public class WildlifeWatcher extends Frame implements WindowListener, ActionList
         // Call the method below that reads the data from the data file (when the Frame first opens)
         readFile();
 	// Display the first data entry (record) in the Frame
-        displayEntry(myCurrentEntry);
+        displayEntry(currentEntry);
     }
 
     public void windowClosed(WindowEvent we)
@@ -439,12 +423,12 @@ public class WildlifeWatcher extends Frame implements WindowListener, ActionList
         txtSighting.setText(WLData[index].getSightingBy());
     }
 
-    // Take the current record displayed on screen and save it back into the 'myCurrentEntry' position
+    // Take the current record displayed on screen and save it back into the 'currentEntry' position
     //      of the 3 arrays.
     public void saveEntry(int index)
     {
         // Take the current entry in the txtWildlife TextField (on screen) and copy it 
-        //      into the appropriate (myCurrentEntry) position of the Wildlife array.
+        //      into the appropriate (currentEntry) position of the Wildlife array.
         WLData[index].setWildlifeDataInfo(txtWildlife.getText(),txtLocation.getText(), txtDate.getText(), 
                                             txtDescription.getText(), txtSighting.getText());
         	
